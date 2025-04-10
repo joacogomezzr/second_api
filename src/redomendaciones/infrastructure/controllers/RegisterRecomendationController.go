@@ -29,7 +29,4 @@ func (controller *RegisterRecomendationController) RegisterRecomendation(g *gin.
 		return
 	}
 	g.JSON(http.StatusCreated, register)
-
-
-
 }

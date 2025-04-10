@@ -32,7 +32,7 @@ if dbHost == "" || dbUser == "" || dbPass == "" || dbSchema == "" {
         log.Fatalf("Una o más variables de entorno están vacías.")
     }
 
-    dsn := fmt.Sprintf("%s:%s@tcp(%s:3307)/%s", dbUser, dbPass, dbHost, dbSchema)
+    dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", dbUser, dbPass, dbHost, dbSchema)
     log.Printf("DSN: %s", dsn)
 
     db, err := sql.Open("mysql", dsn)

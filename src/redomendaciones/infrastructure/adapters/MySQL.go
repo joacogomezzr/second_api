@@ -21,16 +21,17 @@ func NewMySQL() (*MySQL, error) {
 
 func (mysql *MySQL) Register(recomendacion *entities.Recomendacion) error {
     query := `
-        INSERT INTO recomendaciones (
-			id_book
+        INSERT INTO recommendations (
+            id_book
         ) VALUES (?)
     `
+
     result, err := mysql.conn.ExecutePreparedQuery(
         query,
-        recomendacion.IdBook,
+        recomendacion.IdBook, 
     )
     if err != nil {
-        fmt.Println(err)
+        fmt.Println("Error ejecutando la consulta:", err)
         return err
     }
 
@@ -40,15 +41,15 @@ func (mysql *MySQL) Register(recomendacion *entities.Recomendacion) error {
             log.Printf("[MySQL] - Filas afectadas: %d", rowsAffected)
             lastInsertID, err := result.LastInsertId()
             if err != nil {
-                fmt.Println(err)
+                fmt.Println("Error obteniendo el último ID insertado:", err)
                 return err
             }
-            recomendacion.Id = int32(lastInsertID)
+            recomendacion.Id = int32(lastInsertID) // Aquí obtendrías el valor auto-incrementado
         } else {
-            log.Printf("[MySQL] - Ninguna fila fue afectada.")
+            log.Printf("[MySQL] - ⚠ Ninguna fila fue afectada.")
         }
     } else {
-        log.Printf("[MySQL] - Resultado de la consulta es nil.")
+        log.Printf("[MySQL] - ⚠ Resultado de la consulta es nil.")
     }
     return nil
 }
