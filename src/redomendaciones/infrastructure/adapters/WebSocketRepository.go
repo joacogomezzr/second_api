@@ -1,37 +1,30 @@
-// infrastructure/adapters/NotificationRepository.go
 package adapters
 
 import (
-	"errors"
 	"log"
-	"sync"
 	"newapi/src/redomendaciones/domain/entities"
 )
 
 type NotificationRepository struct {
-	connections sync.Map 
+	connections []*entities.Connection 
 }
 
-// RegisterConnection guarda una conexión asociada a un ID
-func (r *NotificationRepository) RegisterConnection(id int64, connection *entities.Connection) error {
-	r.connections.Store(id, connection)
-	log.Printf("Conexión registrada para ID: %d", id)
+// RegisterConnection guarda una conexión en la lista
+func (r *NotificationRepository) RegisterConnection(connection *entities.Connection) error {
+	r.connections = append(r.connections, connection) 
+	log.Println("Conexión registrada")
 	return nil
 }
 
-// SendNotification envía un mensaje a un ID específico
-func (r *NotificationRepository) SendNotification(id int64, message string) error {
-	value, ok := r.connections.Load(id)
-	if !ok {
-		return errors.New("no se encontró una conexión para el ID especificado")
+// SendNotification envía un mensaje a todos los usuarios conectados
+func (r *NotificationRepository) SendNotification(message string) error {
+	for _, connection := range r.connections {
+		err := connection.Conn.WriteMessage(1, []byte(message)) // Enviar mensaje
+		if err != nil {
+			log.Printf("Error al enviar notificación: %v", err)
+		} else {
+			log.Println("Notificación enviada")
+		}
 	}
-
-	conn := value.(*entities.Connection).Conn 
-	err := conn.WriteMessage(1, []byte(message)) 
-	if err != nil {
-		return err
-	}
-
-	log.Printf("Notificación enviada al ID: %d", id)
 	return nil
 }

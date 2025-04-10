@@ -12,12 +12,12 @@ type NotificationUseCase struct {
 	Repo repositories.NotificationRepository
 }
 
-func (u *NotificationUseCase) RegisterConnection(id int64, conn *websocket.Conn) error {
-	connection := &entities.Connection{ID: id, Conn: conn}
-	return u.Repo.RegisterConnection(id, connection)
+func (u *NotificationUseCase) RegisterConnection(conn *websocket.Conn) error {
+	connection := &entities.Connection{Conn: conn}
+	return u.Repo.RegisterConnection(connection)
 }
 
 // NotifyBook envía una notificación al ID del libro especificado
 func (u *NotificationUseCase) NotifyBook(id int64, message string) error {
-	return u.Repo.SendNotification(id, message)
+	return u.Repo.SendNotification(message)
 }

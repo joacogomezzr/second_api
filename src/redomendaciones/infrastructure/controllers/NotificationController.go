@@ -4,8 +4,6 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"newapi/src/redomendaciones/application"
@@ -22,13 +20,6 @@ var upgrader = websocket.Upgrader{
 // WebSocketHandler establece una conexión WebSocket para un ID de libro
 func (c *NotificationController) WebSocketHandler(ctx *gin.Context) {
 	// Obtener el ID del libro desde los parámetros de la URL
-	bookIDStr := ctx.Query("id")
-	bookID, err := strconv.ParseInt(bookIDStr, 10, 64)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
-		return
-	}
-
 	// Actualizar la conexión a WebSocket
 	conn, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
@@ -38,12 +29,12 @@ func (c *NotificationController) WebSocketHandler(ctx *gin.Context) {
 	}
 
 	// Registrar la conexión en el caso de uso
-	err = c.UseCase.RegisterConnection(bookID, conn)
+	err = c.UseCase.RegisterConnection(conn)
 	if err != nil {
 		log.Printf("Error al registrar la conexión: %v", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registrar la conexión"})
 		return
 	}
 
-	log.Printf("Conexión WebSocket establecida para el ID: %d", bookID)
+	log.Printf("Conexión WebSocket establecida")
 }

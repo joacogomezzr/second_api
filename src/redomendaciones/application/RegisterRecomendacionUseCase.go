@@ -39,7 +39,7 @@ func (useCase *RegisterRecomendacionUseCase) Execute(idBook int32) (*entities.Re
 	}
 
 	message := "¡El libro fue marcado como recommendable con éxito y se ha agregado a la lista!"
-	err = useCase.notificationRepository.SendNotification(int64(idBook), message)
+	err = useCase.notificationRepository.SendNotification(message)
 	if err != nil {
 		log.Printf("Error enviando la notificación: %v", err)
 	} else {
